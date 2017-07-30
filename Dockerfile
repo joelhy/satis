@@ -1,6 +1,4 @@
-FROM php:7-alpine
-
-MAINTAINER https://github.com/composer/satis
+FROM joelhy/fpm
 
 RUN apk --no-cache add curl git subversion mercurial openssh openssl tini zlib-dev
 
@@ -42,6 +40,9 @@ COPY src /satis/src/
 
 RUN composer dump-autoload --no-interaction --no-ansi --optimize --no-dev
 
-ENTRYPOINT ["/sbin/tini", "-g", "--", "/satis/bin/docker-entrypoint.sh"]
+#ENTRYPOINT ["/sbin/tini", "-g", "--", "/satis/bin/docker-entrypoint.sh"]
 
-CMD ["--ansi", "-vvv", "build", "/build/satis.json", "/build/output"]
+#CMD ["--ansi", "-vvv", "build", "/build/satis.json", "/build/output"]
+expose 9000
+CMD ["php-fpm"]
+
