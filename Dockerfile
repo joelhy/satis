@@ -1,9 +1,9 @@
 FROM joelhy/fpm
 
-RUN apk --no-cache add curl git subversion mercurial openssh openssl tini zlib-dev
+#RUN apk --no-cache add curl git subversion mercurial openssh openssl tini zlib-dev
+RUN apt-get update && apt-get install -y curl git openssh-client zlibc
 
-RUN docker-php-ext-install zip \
- && echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
+RUN echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
  && echo "date.timezone=${PHP_TIMEZONE:-UTC}" > "$PHP_INI_DIR/conf.d/date_timezone.ini"
 
 ENV COMPOSER_HOME /composer
@@ -14,8 +14,8 @@ RUN mkdir /build \
  && mkdir /composer \
  && chmod -R 777 /composer \
  && curl -sfLo /tmp/composer-setup.php https://getcomposer.org/installer \
- && curl -sfLo /tmp/composer-setup.sig https://composer.github.io/installer.sig \
- && php -r " \
+ && curl -sfLo /tmp/composer-setup.sig https://composer.github.io/installer.sig
+RUN php -r " \
     \$hash = hash('SHA384', file_get_contents('/tmp/composer-setup.php')); \
     \$signature = trim(file_get_contents('/tmp/composer-setup.sig')); \
     if (!hash_equals(\$signature, \$hash)) { \
@@ -31,6 +31,7 @@ WORKDIR /satis
 
 COPY ["composer.json", "composer.lock", "/satis/"]
 
+#RUN composer config -g repo.packagist composer https://packagist.phpcomposer.com
 RUN composer install --no-interaction --no-ansi --no-autoloader --no-scripts --no-plugins --no-dev
 
 COPY bin /satis/bin/
