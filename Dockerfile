@@ -44,6 +44,9 @@ RUN composer dump-autoload --no-interaction --no-ansi --optimize --no-dev
 #ENTRYPOINT ["/sbin/tini", "-g", "--", "/satis/bin/docker-entrypoint.sh"]
 
 #CMD ["--ansi", "-vvv", "build", "/build/satis.json", "/build/output"]
+
+RUN groupadd -g 1000 joelhy && useradd -r -u 1000 -g joelhy joelhy
+
 expose 9000
 CMD ["php-fpm"]
 
